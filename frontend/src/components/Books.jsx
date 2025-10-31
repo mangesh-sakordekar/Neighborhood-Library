@@ -1,7 +1,6 @@
 import React from "react";
 import EntityForm from "./EntityForm.jsx";
 import CrudTable from "./CrudTable.jsx";
-import UpdateForm from "./UpdateForm";
 import "../styles/Library.css";
 import { getBooks, createBook, updateBook, deleteBook } from "../api";
 import { toast } from "react-toastify";
@@ -136,7 +135,7 @@ export default function Books() {
       <CrudTable
         columns={[{ key: "id", label: "ID" }, { key: "title", label: "Title" }, { key: "author", label: "Author" }]}
         data={books}
-        actions={[{ label: "Delete", onClick: handleDelete, confirmMessage: "Delete book?" }]}
+        actions={[{ label: "Delete", onClick: handleDelete }]}
         keyField="id"
       />
     </div>

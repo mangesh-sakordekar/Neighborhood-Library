@@ -121,7 +121,7 @@ export default function Members() {
       <CrudTable
         columns={[{ key: "id", label: "ID" }, { key: "name", label: "Name" }, { key: "contact", label: "Contact" }]}
         data={members}
-        actions={[{ label: "Delete", onClick: handleDelete, confirmMessage: "Delete member?" }]}
+        actions={[{ label: "Delete", onClick: handleDelete }]}
         keyField="id"
       />
     </div>
