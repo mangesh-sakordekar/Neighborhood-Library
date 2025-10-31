@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { getBooks, createBook, updateBook, deleteBook } from "../api";
 
+export { default } from "./Books.jsx";
+
+// The rest of the original code is removed as it is no longer needed.
+import React, { useEffect, useState } from "react";
+import { getBooks, createBook, updateBook, deleteBook } from "../api";
+
 export default function BookList() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
