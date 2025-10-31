@@ -1,8 +1,8 @@
 import React from "react";
-import BookForm from "./BookForm.jsx";
-import BookTable from "./BookTable.jsx";
+import EntityForm from "./EntityForm.jsx";
+import CrudTable from "./CrudTable.jsx";
 import UpdateForm from "./UpdateForm";
-import styles from "./BookList.module.css";
+import "../styles/Library.css";
 import { getBooks, createBook, updateBook, deleteBook } from "../api";
 import { toast } from "react-toastify";
 
@@ -12,11 +12,10 @@ export default function Books() {
   const [loading, setLoading] = React.useState(true);
   const [message, setMessage] = React.useState("");
 
-  const [bookId, setBookId] = React.useState("");
-  const [updateTitle, setUpdateTitle] = React.useState("");
-  const [updateAuthor, setUpdateAuthor] = React.useState("");
+  const [addValues, setAddValues] = React.useState({ title: "", author: "" });
   const [isAdding, setIsAdding] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
+  const [selectedBook, setSelectedBook] = React.useState(null);
 
   const fetchBooks = async () => {
     try {
@@ -33,10 +32,10 @@ export default function Books() {
 
   React.useEffect(() => { fetchBooks(); }, []);
 
-  const handleAddBook = async (payload) => {
+  const handleAddBook = async (values) => {
     setIsAdding(true);
     try {
-      await createBook(payload);
+      await createBook(values);
       toast.success("Book added");
       await fetchBooks();
     } catch (err) {
@@ -47,12 +46,12 @@ export default function Books() {
 
   const handleUpdateBook = async (e) => {
     e.preventDefault();
-    if (!bookId) return setMessage("Please select a book to update");
-    if (!updateTitle.trim() || !updateAuthor.trim()) return setMessage("Please provide title and author.");
+    if (!selectedBook) return setMessage("Please select a book to update");
+    if (!selectedBook.title.trim() || !selectedBook.author.trim()) return setMessage("Please provide title and author.");
     setIsUpdating(true);
     try {
-      await updateBook(bookId, { title: updateTitle, author: updateAuthor });
-      setBookId(""); setUpdateTitle(""); setUpdateAuthor("");
+      await updateBook(selectedBook.id, { title: selectedBook.title, author: selectedBook.author });
+      setSelectedBook(null);
       toast.success("Book updated");
       await fetchBooks();
     } catch (err) {
@@ -61,10 +60,10 @@ export default function Books() {
     } finally { setIsUpdating(false); }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (row) => {
     if (!window.confirm("Are you sure you want to delete this book?")) return;
     try {
-      await deleteBook(id);
+      await deleteBook(row.id);
       toast.success("Book deleted");
       await fetchBooks();
     } catch (err) {
@@ -73,38 +72,73 @@ export default function Books() {
     }
   };
 
-  React.useEffect(() => {
-    if (bookId) {
-      const selected = books.find((b) => String(b.id) === String(bookId));
-      if (selected) { setUpdateTitle(selected.title); setUpdateAuthor(selected.author); }
-    } else { setUpdateTitle(""); setUpdateAuthor(""); }
-  }, [bookId, books]);
+  // Update selectedBook when selection changes
 
   if (loading) return <p>Loading books...</p>;
 
-  return (
-    <div className={styles.wrapper}>
-      <BookForm onAdd={handleAddBook} existingTitles={books.map((b) => b.title)} isSubmitting={isAdding} />
+  // Add form fields
+  const addFields = [
+    { name: "title", label: "Title", required: true },
+    { name: "author", label: "Author", required: true },
+  ];
 
-      <UpdateForm
-        title={"Update Book:"}
-        selectOptions={books.map(b => ({ id: b.id, label: `${b.title} by ${b.author}` }))}
-        selectedId={bookId}
-        onSelectChange={(v) => setBookId(v)}
-        fields={[{ name: 'title', label: 'Title' }, { name: 'author', label: 'Author' }]}
-        values={{ title: updateTitle, author: updateAuthor }}
-        onChange={(name, val) => {
-          if (name === 'title') setUpdateTitle(val);
-          if (name === 'author') setUpdateAuthor(val);
-        }}
-        onSubmit={handleUpdateBook}
-        isSubmitting={isUpdating}
-        submitLabel={"Update"}
+  // Update form fields
+  const updateFields = [
+    { name: "title", label: "Title", required: true },
+    { name: "author", label: "Author", required: true },
+  ];
+
+  // Add form change handler
+  const onAddChange = (name, value) => setAddValues(prev => ({ ...prev, [name]: value }));
+  const onAddSubmit = (e) => {
+    e.preventDefault();
+    handleAddBook(addValues);
+    setAddValues({ title: "", author: "" });
+  };
+
+  // Update form change handler
+  const onUpdateSelect = (e) => {
+    const id = e.target.value;
+    const book = books.find(b => String(b.id) === String(id));
+    setSelectedBook(book || null);
+  };
+  const onUpdateChange = (name, value) => setSelectedBook(prev => ({ ...(prev||{}), [name]: value }));
+
+  return (
+  <div className="wrapper">
+      <EntityForm
+        title="Add Book:"
+        fields={addFields}
+        values={addValues}
+        onChange={onAddChange}
+        onSubmit={onAddSubmit}
+        isSubmitting={isAdding}
+        submitLabel="Add"
       />
 
-      {message && <p className={styles.message}>{message}</p>}
+      {/* Update Book Form */}
+      <form onSubmit={handleUpdateBook} className="form">
+        <h3 className="formTitle">Update Book:</h3>
+        <select className="input" value={selectedBook?.id ?? ""} onChange={onUpdateSelect}>
+          <option value="">Select Book</option>
+          {books.map(b => <option key={b.id} value={b.id}>{b.title} by {b.author}</option>)}
+        </select>
+        <input className="input" placeholder="New Title" value={selectedBook?.title ?? ""} onChange={e => onUpdateChange("title", e.target.value)} />
+        <input className="input" placeholder="New Author" value={selectedBook?.author ?? ""} onChange={e => onUpdateChange("author", e.target.value)} />
+        <button className="button" type="submit" disabled={isUpdating}>{isUpdating ? "Updating..." : "Update"}</button>
+      </form>
 
-      <BookTable books={books} onDelete={handleDelete} />
+      {message && <p className="message">{message}</p>}
+
+      <div className="headerRow">
+          <h2 className="heading">📚 Books</h2>
+      </div>
+      <CrudTable
+        columns={[{ key: "id", label: "ID" }, { key: "title", label: "Title" }, { key: "author", label: "Author" }]}
+        data={books}
+        actions={[{ label: "Delete", onClick: handleDelete, confirmMessage: "Delete book?" }]}
+        keyField="id"
+      />
     </div>
   );
 }

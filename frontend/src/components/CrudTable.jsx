@@ -1,41 +1,43 @@
 import React from "react";
+import "../styles/Library.css";
 
 // columns: [{key,label,render?}]
 // actions: [{label, onClick(row), confirmMessage?}]
 export default function CrudTable({ columns, data, actions = [], keyField = "id" }) {
   return (
-    <div style={{ backgroundColor: "#fff", padding: "1rem 1.5rem", borderRadius: 12 }}>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+    <div className="table-container">
+      <table className="table">
         <thead>
-          <tr style={{ backgroundColor: "#e3f2fd", textAlign: "left" }}>
+          <tr className="table-header">
             {columns.map((c) => (
-              <th key={c.key} style={{ padding: "0.75rem", fontWeight: 600 }}>
+              <th key={c.key} className="th">
                 {c.label}
               </th>
             ))}
-            {actions.length > 0 && <th style={{ padding: "0.75rem", fontWeight: 600 }}>Actions</th>}
+            {actions.length > 0 && <th className="th">Actions</th>}
           </tr>
         </thead>
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td style={{ padding: "0.75rem" }} colSpan={columns.length + (actions.length ? 1 : 0)}>
+              <td className="td" colSpan={columns.length + (actions.length ? 1 : 0)}>
                 No records found
               </td>
             </tr>
           ) : (
             data.map((row) => (
-              <tr key={row[keyField] ?? Math.random()} style={{ borderBottom: "1px solid #eee" }}>
+              <tr key={row[keyField] ?? Math.random()} className="table-row">
                 {columns.map((c) => (
-                  <td key={c.key} style={{ padding: "0.75rem" }}>
+                  <td key={c.key} className="td">
                     {c.render ? c.render(row) : row[c.key]}
                   </td>
                 ))}
                 {actions.length > 0 && (
-                  <td style={{ padding: "0.75rem" }}>
+                  <td className="td">
                     {actions.map((a, i) => (
                       <button
                         key={i}
+                        className="button danger"
                         style={{ marginRight: 8 }}
                         onClick={() => {
                           if (a.confirmMessage) {

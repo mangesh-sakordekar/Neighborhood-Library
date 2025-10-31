@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Books from "./components/Books.jsx";
 import Members from "./components/Members.jsx";
 import BorrowedBooks from "./components/BorrowedBooks.jsx";
-import styles from "./App.module.css";
+import styles from "./styles/App.module.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

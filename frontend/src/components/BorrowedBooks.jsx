@@ -6,7 +6,7 @@ import {
   getMembers,
   getAvailableBooks,
 } from "../api";
-import styles from "./BookList.module.css";
+import "../styles/Library.css";
 import { toast } from "react-toastify";
 import EntityForm from "./EntityForm";
 import CrudTable from "./CrudTable";
@@ -120,7 +120,7 @@ export default function BorrowedBooks() {
   };
 
   return (
-    <div className={styles.wrapper}>
+  <div className="wrapper">
       <EntityForm
         title="Borrow Book:"
         fields={borrowFields}
@@ -131,16 +131,16 @@ export default function BorrowedBooks() {
         submitLabel="Borrow"
       />
 
-      {message && <p className={styles.message}>{message}</p>}
+      {message && <p className="message">{message}</p>}
 
-      <div className={styles.tableContainer}>
-        <div className={styles.headerRow}>
-          <h2 className={styles.heading}>⏳ Pending Returns</h2>
+      <div className="table-container">
+        <div className="headerRow">
+          <h2 className="heading">⏳ Pending Returns</h2>
 
           {/* Filter section */}
-          <div className={styles.filterSection}>
+          <div className="filterSection">
             <select
-              className={styles.input}
+              className="input"
               value={filterMember}
               onChange={(e) => setFilterMember(e.target.value)}
             >
@@ -152,10 +152,10 @@ export default function BorrowedBooks() {
               ))}
             </select>
 
-            <button onClick={handleSearch} className={styles.filterButton}>
+            <button onClick={handleSearch} className="filterButton">
               Search
             </button>
-            <button onClick={handleClear} className={styles.clearButton}>
+            <button onClick={handleClear} className="clearButton">
               Clear
             </button>
           </div>

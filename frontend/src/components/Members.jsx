@@ -3,7 +3,7 @@ import { getMembers, addMember, updateMember, deleteMember } from "../api";
 import { toast } from "react-toastify";
 import EntityForm from "./EntityForm";
 import CrudTable from "./CrudTable";
-import styles from "./BookList.module.css";
+import "../styles/Library.css";
 
 export default function Members() {
   const [members, setMembers] = React.useState([]);
@@ -85,7 +85,7 @@ export default function Members() {
   };
 
   return (
-    <div className={styles.wrapper}>
+  <div className="wrapper">
       <EntityForm
         title="Add Member:"
         fields={addFields}
@@ -97,9 +97,9 @@ export default function Members() {
       />
 
       {/* For simplicity, use native form for update but powered by EntityForm-like pattern */}
-      <form onSubmit={handleUpdate} className={styles.form}>
-        <h3 className={styles.formTitle}>Update Member:</h3>
-        <select className={styles.input} value={selectedMember?.id ?? ""} onChange={(e) => {
+      <form onSubmit={handleUpdate} className="form">
+        <h3 className="formTitle">Update Member:</h3>
+        <select className="input" value={selectedMember?.id ?? ""} onChange={(e) => {
           const id = e.target.value;
           const m = members.find(x => String(x.id) === String(id));
           setSelectedMember(m || null);
@@ -108,15 +108,15 @@ export default function Members() {
           {members.map(m => <option key={m.id} value={m.id}>{m.name} (ID: {m.id})</option>)}
         </select>
 
-        <input className={styles.input} placeholder="New Name" value={selectedMember?.name ?? ""} onChange={(e) => setSelectedMember(prev => ({ ...(prev||{}), name: e.target.value }))} />
-        <input className={styles.input} placeholder="New Contact" value={selectedMember?.contact ?? ""} onChange={(e) => setSelectedMember(prev => ({ ...(prev||{}), contact: e.target.value }))} />
-        <button className={styles.button} type="submit" disabled={isUpdating}>{isUpdating ? "Updating..." : "Update"}</button>
+        <input className="input" placeholder="New Name" value={selectedMember?.name ?? ""} onChange={(e) => setSelectedMember(prev => ({ ...(prev||{}), name: e.target.value }))} />
+        <input className="input" placeholder="New Contact" value={selectedMember?.contact ?? ""} onChange={(e) => setSelectedMember(prev => ({ ...(prev||{}), contact: e.target.value }))} />
+        <button className="button" type="submit" disabled={isUpdating}>{isUpdating ? "Updating..." : "Update"}</button>
       </form>
 
-      {message && <p className={styles.message}>{message}</p>}
+      {message && <p className="message">{message}</p>}
 
-      <div className={styles.headerRow}>
-          <h2 className={styles.heading}>👥 Members</h2>
+      <div className="headerRow">
+          <h2 className="heading">👥 Members</h2>
       </div>
       <CrudTable
         columns={[{ key: "id", label: "ID" }, { key: "name", label: "Name" }, { key: "contact", label: "Contact" }]}
