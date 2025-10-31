@@ -12,7 +12,9 @@ def serve():
     library_pb2_grpc.add_LibraryServiceServicer_to_server(LibraryServiceImpl(), server)
     server.add_insecure_port(f"[::]:{port}")
     server.start()
-    print(f"gRPC Server running on port {port}")
+    # use structured logger instead of print
+    from app.logging_config import logger
+    logger.info(f"gRPC Server running on port {port}")
     server.wait_for_termination()
 
 if __name__ == "__main__":

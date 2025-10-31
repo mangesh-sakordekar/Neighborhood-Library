@@ -3,3 +3,8 @@ grpcio-tools
 psycopg2-binary
 SQLAlchemy
 python-dotenv
+
+# Test dependencies
+pytest>=7.4.0
+pytest-cov>=4.1.0  # for coverage reporting
+pytest
