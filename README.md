@@ -66,6 +66,30 @@ python -m app.server
 
 ---
 
+
+## ✅ Running tests
+
+Run all Python unit tests for the gRPC backend inside the Docker container for full isolation and reproducibility:
+
+```powershell
+# build and start services (only grpc-server is needed but Compose will start others)
+docker compose up --build -d
+
+# run tests inside the grpc-server container
+docker compose exec grpc-server pytest tests/ -v --cov=app
+
+# stop containers when done
+docker compose down
+```
+
+What the tests cover
+- Unit tests for services (books, members, borrowings)
+- Validator tests
+- Tests run against an in-memory SQLite database to avoid touching production data
+
+
+---
+
 ## 🌐 Run Node Gateway Locally
 ```bash
 cd backend/node_gateway
@@ -102,15 +126,52 @@ npm start
 
 ---
 
+
 ## 🧱 Folder Structure
 ```
 .
 ├── backend/
-│   ├── grpc_server/       # Python gRPC backend
-│   └── node_gateway/      # Node.js HTTP gateway
-├── frontend/              # React frontend
-├── db/init.sql            # Postgres schema + seed data
-└── docker-compose.yml
+│   ├── grpc_server/
+│   │   ├── app/
+│   │   │   ├── models.py
+│   │   │   ├── database.py
+│   │   │   ├── service_impl.py
+│   │   │   ├── constants.py
+│   │   │   ├── logging_config.py
+│   │   ├── services/
+│   │   │   ├── book_service.py
+│   │   │   ├── member_service.py
+│   │   │   ├── borrowing_service.py
+│   │   ├── generated/
+│   │   │   ├── library_pb2.py
+│   │   │   ├── library_pb2_grpc.py
+│   │   ├── protos/
+│   │   │   └── library.proto
+│   │   ├── tests/
+│   │   │   ├── test_book_service.py
+│   │   │   ├── test_member_service.py
+│   │   │   ├── test_borrowing_service.py
+│   │   │   ├── test_validators.py
+│   │   │   └── conftest.py
+│   │   ├── requirements.txt
+│   │   ├── Dockerfile
+│   │   ├── entrypoint.sh
+│   │   └── server.py
+│   └── node_gateway/
+│       ├── server.js
+│       ├── package.json
+│       ├── Dockerfile
+│       └── protos/
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   ├── Dockerfile
+│   └── ...
+├── db/
+│   └── init.sql
+├── docker-compose.yml
+└── README.md
 ```
 
 ---
