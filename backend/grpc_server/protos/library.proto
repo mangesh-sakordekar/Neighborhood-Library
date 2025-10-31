@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package library;
+
+message Book {
+  int32 id = 1;
+  string title = 2;
+  string author = 3;
+  bool available = 4;
+}
+
+
+message Borrowing {
+  int32 book_id = 1;
+  int32 member_id = 2;
+}
+
+message BookId {
+  int32 id = 1;
+}
+
+message MemberId {
+  int32 id = 1;
+}
+
+message Empty {}
+
+message BookList {
+  repeated Book books = 1;
+}
+
+message AddMemberRequest {
+  string name = 1;
+  string contact = 2;
+}
+
+message Member {
+  int32 id = 1;
+  string name = 2;
+  string contact = 3;
+}
+
+message MemberList {
+  repeated Member members = 1;
+}
+
+message BorrowedBook {
+  int32 borrowing_id = 1;
+  int32 book_id = 2;
+  string book_title = 3;
+  int32 member_id = 4;
+  string member_name = 5;
+  string borrowing_date = 6;
+}
+
+message BorrowedBooksResponse {
+  repeated BorrowedBook borrowed_books = 1;
+}
+
+message ReturnBookRequest {
+  int32 borrowing_id = 1;
+}
+
+message BookResponse {
+  bool success = 1;
+  string message = 2;
+  Book book = 3;
+}
+
+message UpdateMemberRequest {
+  int32 id = 1;
+  string name = 2;
+  string contact = 3;
+}
+
+service LibraryService {
+  rpc CreateBook (Book) returns (Book);
+  rpc ListBooks (Empty) returns (BookList);
+  rpc CreateMember (Member) returns (Member);
+  rpc BorrowBook (Borrowing) returns (Empty);
+  rpc AddMember (AddMemberRequest) returns (Member);
+  rpc ListMembers (Empty) returns (MemberList);
+  rpc ListBorrowedBooks(google.protobuf.Empty) returns (BorrowedBooksResponse);
+  rpc ReturnBook(ReturnBookRequest) returns (google.protobuf.Empty);
+  rpc ListAvailableBooks (Empty) returns (BookList);
+  rpc UpdateBook (Book) returns (Book);
+  rpc DeleteBook (BookId) returns (google.protobuf.Empty);
+  rpc UpdateMember (Member) returns (Member);
+  rpc DeleteMember (MemberId) returns (google.protobuf.Empty);
+}
